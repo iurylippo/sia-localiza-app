@@ -1,10 +1,10 @@
-import { Layout } from '@/components/layout';
+import { createBrowserRouter } from 'react-router-dom';
+import { Router } from './router';
+import { Layout } from '@/pages/layout';
 import ErrorPage from '@/pages/error';
 import { Home } from '@/pages/home';
 import { Login } from '@/pages/login';
-import { createBrowserRouter } from 'react-router-dom';
 import { Main } from '@/pages/main';
-import { Router } from './router';
 
 export const router = createBrowserRouter([
   {

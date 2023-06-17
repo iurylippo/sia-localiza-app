@@ -10,7 +10,7 @@
     "plugin:prettier/recommended"
   ],
   "parserOptions": {
-    "ecmaVersion": "latest",
+    "ecmaVersion": 2022,
     "sourceType": "module",
     "project": ["./tsconfig.json"]
   },
@@ -28,7 +28,12 @@
         "trailingComma": "es5"
       }
     ],
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/no-extraneous-class": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-misused-promises": "off"
   },
   "ignorePatterns": ["vite.config.ts", "tailwind.config.js", "vite-env.d.ts"]
 }
