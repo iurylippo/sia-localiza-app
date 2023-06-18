@@ -1,3 +1,5 @@
-import logo from './estacio-logo.png';
+import estacioLogo from './estacio-logo.png';
+import siaLocalizaLogo from './sia-localiza-logo.png';
 
-export const logoImg = logo;
+export { estacioLogo };
+export { siaLocalizaLogo };

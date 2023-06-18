@@ -1,5 +1,5 @@
 'use client';
-import { logoImg } from '@/assets';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
@@ -15,6 +15,7 @@ import {
 } from '@/components/layout/form';
 import { Input } from '@/components/layout/input';
 import { Button } from '@/components/layout/button';
+import { siaLocalizaLogo } from '@/assets';
 
 const FormSchema = z.object({
   email: z
@@ -88,7 +89,7 @@ export function Login() {
                     <div className="text-center">
                       <img
                         className="w-48 mx-auto rounded"
-                        src={logoImg}
+                        src={siaLocalizaLogo}
                         alt="logo"
                       />
                       <h4 className="pb-1 mt-1 mb-12 text-xl font-semibold text-title">

@@ -1,6 +1,6 @@
-import { logoImg } from '@/assets';
 import { BarChart3Icon } from 'lucide-react';
 import classNames from 'classnames';
+import { siaLocalizaLogo } from '@/assets';
 interface Props {
   onMenuButtonClick: () => void;
 }
@@ -14,7 +14,11 @@ const Navbar = (props: Props) => {
       })}
     >
       <div className="w-12 h-12 text-lg font-bold rounded">
-        <img className="overflow-hidden rounded" src={logoImg} alt="logo" />
+        <img
+          className="overflow-hidden rounded"
+          src={siaLocalizaLogo}
+          alt="logo"
+        />
       </div>
       <div className="flex-grow"></div> {/** spacer */}
       <button className="md:hidden" onClick={props.onMenuButtonClick}>
