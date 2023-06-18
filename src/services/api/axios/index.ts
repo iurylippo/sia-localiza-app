@@ -1,5 +1,5 @@
 import axios, { HttpStatusCode } from 'axios';
-import { CONSTANTS } from '@/config/constants';
+import { CONSTANTS } from '@/config';
 import { TokenService } from '../token';
 
 const { API_BACKEND } = CONSTANTS;

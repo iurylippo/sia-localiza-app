@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@/config/constants';
+import { CONSTANTS } from '@/config';
 import { isExpired } from 'react-jwt';
 
 const { STORE_ACCESSTOKEN_KEY, STORE_REFRESHTOKEN_KEY } = CONSTANTS;

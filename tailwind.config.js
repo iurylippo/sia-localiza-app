@@ -104,6 +104,7 @@ module.exports = {
 		},
 		fontFamily: {
 		  sans: ['var(--font-sans)', ...fontFamily.sans],
+		  body: ['Roboto']
 		},
 		keyframes: {
 		  'accordion-down': {

@@ -1,5 +1,4 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateTime } from 'luxon';
 import Kalend, {
   CalendarView,
@@ -69,7 +68,7 @@ const CalendComponent = (props: KalendProps) => {
           handleCreateEventModalClose();
         }}
         type={type}
-        eventData={eventData}
+        data={eventData}
       />
 
       <Kalend

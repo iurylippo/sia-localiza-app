@@ -24,7 +24,7 @@
 		--color-info: #69cddf;
 		--text-primary: #0E3469;
 
-
+		--font-sans: "Roboto"
 		--background: 0 0% 100%;
 		--foreground: 222.2 47.4% 11.2%;
 
@@ -156,6 +156,10 @@
 @layer base {
 	* {
 		@apply border-border;
+	}
+
+	html {
+		font-family: Roboto, system-ui, sans-serif;
 	}
 
 	body {

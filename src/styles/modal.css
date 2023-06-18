@@ -1,0 +1,9 @@
+.react-responsive-modal-overlay,
+.react-responsive-modal-container,
+.react-responsive-modal-modal {
+	animation-fill-mode: forwards !important;
+}
+
+.react-responsive-modal-modal {
+	border-radius: 10px;
+}
