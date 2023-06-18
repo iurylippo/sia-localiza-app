@@ -14,8 +14,10 @@ import {
   FormMessage,
 } from '@/components/layout/form';
 import { Input } from '@/components/layout/input';
-import { Button } from '@/components/layout/button';
+import { Button } from '@/components/buttons/button';
 import { siaLocalizaLogo } from '@/assets';
+import { toast } from '@/components/layout/use-toast';
+import { LinkedinIcon } from 'lucide-react';
 
 const FormSchema = z.object({
   email: z
@@ -29,7 +31,9 @@ const FormSchema = z.object({
 });
 
 export function Login() {
-  const { refreshTokenAutomation, userSignInMutation } = useUserAuth();
+  const { refreshTokenAutomation, userSignInMutation, isLoading } =
+    useUserAuth();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -53,11 +57,17 @@ export function Login() {
         error?.response &&
         error.response.status === HttpStatusCode.Unauthorized
       ) {
-        // return toast.error('email ou senha inválidos!')
-        console.log('Email ou senha inválidos!');
+        toast({
+          title: 'email ou senha inválidos!',
+          variant: 'alert',
+        });
+        return;
       }
-      console.log('Ocorreu um erro inesperado, tente novamente.');
-      //   toast.error('Ocorreu um erro inesperado, tente novamente.')
+
+      toast({
+        title: 'Ocorreu um erro inesperado, tente novamente.',
+        variant: 'destructive',
+      });
     }
   }
 
@@ -78,26 +88,29 @@ export function Login() {
   }, []);
 
   return (
-    <section className="h-full gradient-form bg-neutral-200 dark:bg-neutral-700">
-      <div className="container h-full p-10">
-        <div className="flex flex-wrap items-center justify-center h-full g-6 text-neutral-800 dark:text-neutral-200">
+    <section className="flex items-center justify-center h-screen lg:h-full gradient-form bg-neutral-200 dark:bg-neutral-700">
+      <div className="container py-4">
+        <div className="flex flex-wrap items-center justify-center g-6 text-neutral-800 dark:text-neutral-200">
           <div className="w-full">
             <div className="block bg-white rounded-lg shadow-lg dark:bg-neutral-800">
               <div className="g-0 lg:flex lg:flex-wrap">
                 <div className="px-4 md:px-0 lg:w-6/12">
-                  <div className="md:mx-6 md:p-12">
+                  <div className=" md:mx-6">
                     <div className="text-center">
                       <img
                         className="w-48 mx-auto rounded"
                         src={siaLocalizaLogo}
                         alt="logo"
                       />
-                      <h4 className="pb-1 mt-1 mb-12 text-xl font-semibold text-title">
+                      <h4 className="pb-1 mt-1 mb-12 text-xl font-bold text-title">
                         Sia Localiza
                       </h4>
                     </div>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)}>
+                      <form
+                        className="h-full "
+                        onSubmit={form.handleSubmit(onSubmit)}
+                      >
                         <p className="mb-4">Forneça os dados abaixo:</p>
                         <div
                           className="relative mb-4"
@@ -140,28 +153,26 @@ export function Login() {
                         </div>
                         <div className="pt-1 pb-1 mb-12 text-center">
                           <Button
+                            isLoading={isLoading}
+                            title="Login"
                             type="submit"
                             style={{
                               background:
                                 'linear-gradient(to right, #24bbca, #51bdea)',
                             }}
                             className="mb-3 inline-block w-full rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]"
-                          >
-                            Login
-                          </Button>
+                          />
 
                           <a href="#!">Esqueceu senha?</a>
                         </div>
                         <div className="flex items-center justify-between pb-6">
                           <p className="mb-0 mr-2">não tem conta?</p>
-                          <button
+                          {/* isLoading */}
+                          <Button
+                            isOutline={true}
+                            title="Registrar"
                             type="submit"
-                            className="inline-block rounded border-2 border-danger px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-danger transition duration-150 ease-in-out hover:border-danger-600 hover:bg-neutral-500 hover:bg-opacity-10 hover:text-danger-600 focus:border-danger-600 focus:text-danger-600 focus:outline-none focus:ring-0 active:border-danger-700 active:text-danger-700 dark:hover:bg-neutral-100 dark:hover:bg-opacity-10"
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                          >
-                            Registrar
-                          </button>
+                          />
                         </div>
                       </form>
                     </Form>
@@ -175,8 +186,47 @@ export function Login() {
                   }}
                 >
                   <div className="px-4 py-6 text-white md:mx-6 md:p-12">
-                    <h4 className="mb-6 text-xl font-semibold">Sia Localiza</h4>
-                    <p className="text-sm">Créditos:</p>
+                    <header>
+                      <h4 className="mb-6 text-xl font-semibold">
+                        Projeto desenvolvido para facilitar a localização das
+                        salas do campus de uma forma dinâmica.
+                      </h4>
+                    </header>
+                    <div>
+                      <p className="mb-4 font-semibold text-md">Créditos:</p>
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <a
+                            className="flex"
+                            href="https://www.linkedin.com/in/iurylippo"
+                            target="__blank"
+                          >
+                            <LinkedinIcon className="mr-2" size={15} />
+                            <span>Iury Lippo</span>
+                          </a>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <a
+                            className="flex"
+                            href="https://www.linkedin.com/in/gabriel-pereira-da-silva-2784b3175"
+                            target="__blank"
+                          >
+                            <LinkedinIcon className="mr-2" size={15} />
+                            <span>Gabriel Pereira</span>
+                          </a>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <a
+                            className="flex"
+                            href="https://www.linkedin.com/in/lucas-fonseca-59a55a163"
+                            target="__blank"
+                          >
+                            <LinkedinIcon className="mr-2" size={15} />
+                            <span>Lucas Fonseca</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

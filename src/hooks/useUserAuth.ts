@@ -9,6 +9,7 @@ import {
   type UserLoginData,
   type UserSignInResponseType,
 } from '@/common/types';
+import { useState } from 'react';
 
 // type AccessTokenDecodedType = {
 //   tenant_id: string
@@ -19,6 +20,7 @@ import {
 
 export function useUserAuth() {
   const { setUserStore } = useUserStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function refreshTokenAutomation(autoRefetch = true) {
     const tokenStored = TokenService.getAccessToken();
@@ -74,6 +76,7 @@ export function useUserAuth() {
 
   const userSignInMutation = useMutation(
     async (data: UserLoginData) => {
+      setIsLoading(true);
       return await BASE_API.post('/auth/authenticate', {
         email: data.email,
         password: data.password,
@@ -83,11 +86,16 @@ export function useUserAuth() {
       retry: false,
       onSuccess: (data: { data: UserSignInResponseType }) => {
         storeUserSignInDataResponse(data.data);
+        setIsLoading(false);
+      },
+      onError: () => {
+        setIsLoading(false);
       },
     }
   );
   return {
     userSignInMutation,
     refreshTokenAutomation,
+    isLoading,
   };
 }
