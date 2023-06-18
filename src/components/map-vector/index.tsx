@@ -169,8 +169,7 @@ export default function MapVector() {
           >
             <TransformComponent>
               <svg
-                width="1239"
-                height="878"
+                className="md:w-[768px] md:h-[560px] w-[540px] h-[500px]"
                 viewBox="0 0 1239 878"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
