@@ -180,7 +180,7 @@ export function Login() {
                 </div>
 
                 <div
-                  className="flex items-center rounded-b-lg lg:w-6/12 lg:rounded-r-lg lg:rounded-bl-none"
+                  className="items-center hidden rounded-b-lg md:flex lg:w-6/12 lg:rounded-r-lg lg:rounded-bl-none"
                   style={{
                     background: 'linear-gradient(to right, #24bbca, #51bdea)',
                   }}

@@ -48,6 +48,15 @@ export default function MapVector() {
     try {
       setIsLoading(true);
 
+      const commonMsg =
+        'Precisa selecionar ao menos um professor ou disciplina!';
+
+      if (!professorId && !subjectId) {
+        toast({ title: commonMsg, variant: 'alert' });
+        setIsLoading(false);
+        return;
+      }
+
       const response = await API.get<CampusEvent[]>('/events/campus', {
         params: {
           day_week: dayWeek,
