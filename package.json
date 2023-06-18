@@ -70,7 +70,6 @@
     "tailwindcss-animate": "^1.0.6",
     "typescript": "*",
     "vite": "^4.3.9",
-    "vite-plugin-mkcert": "^1.15.0",
     "vite-plugin-pwa": "^0.16.4"
   }
 }
