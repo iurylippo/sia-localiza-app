@@ -10,6 +10,7 @@ interface SearchButtonProps {
   type?: 'submit' | 'reset' | 'button';
   style?: CSSProperties;
   isOutline?: boolean;
+  disabled?: boolean;
 }
 
 export function Button({
@@ -20,9 +21,11 @@ export function Button({
   style,
   isLoading = false,
   isOutline = false,
+  disabled = false,
 }: SearchButtonProps) {
   return (
     <BaseButon
+      disabled={disabled}
       style={style}
       className={`${className} flex justify-center`}
       type={type}

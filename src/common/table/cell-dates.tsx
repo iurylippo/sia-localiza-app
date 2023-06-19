@@ -1,4 +1,4 @@
-import { formatDate } from '@/utils';
+import { formatDate } from '@/utils/date';
 
 function cellFormat(field: 'created_at' | 'updated_at') {
   return {

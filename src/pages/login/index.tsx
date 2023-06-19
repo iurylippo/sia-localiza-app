@@ -154,6 +154,7 @@ export function Login() {
                         <div className="pt-1 pb-1 mb-12 text-center">
                           <Button
                             isLoading={isLoading}
+                            disabled={isLoading}
                             title="Login"
                             type="submit"
                             style={{

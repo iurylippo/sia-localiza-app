@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Modal } from 'react-responsive-modal';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/layout/button';
 
 import { toast } from '@/components/layout/use-toast';
 import { PaletteIcon, Trash2Icon } from 'lucide-react';
@@ -23,6 +22,9 @@ import { PopoverPicker } from '../color-picker';
 import { API } from '@/services/api/axios';
 import { type AxiosError, HttpStatusCode } from 'axios';
 import { Input } from '../layout/input';
+import InputMask from 'react-input-mask';
+import { compareHourIsGtHour, getAmPmFromHour } from '@/utils/date';
+import { Button } from '../buttons/button';
 
 interface ClassModalProps {
   name?: string;
@@ -49,10 +51,10 @@ const FormSchema = z.object({
     required_error: 'Por favor selecione Dia/Período.',
   }),
   start_at: z.string({
-    required_error: 'Por favor selecione Hora/Início.',
+    required_error: 'Por favor preencha Hora/Início.',
   }),
   end_at: z.string({
-    required_error: 'Por favor selecione Hora/Fim.',
+    required_error: 'Por favor preencha Hora/Fim.',
   }),
   color: z
     .string({
@@ -69,6 +71,7 @@ export function EventModal({
   data,
 }: ClassModalProps) {
   const [isModalOpenIntern, setIsModalOpenIntern] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -120,6 +123,7 @@ export function EventModal({
 
   async function create(formData: z.infer<typeof FormSchema>) {
     try {
+      setIsLoading(true);
       await API.post('events', formData);
       toast({
         title: 'Evento criado com sucesso!',
@@ -127,10 +131,12 @@ export function EventModal({
       });
       setIsModalOpenIntern(false);
       onModalClose();
+      setIsLoading(false);
     } catch (err: any) {
+      setIsLoading(false);
       if (err) {
         const erroAxios = err as AxiosError<{ message: string }>;
-        console.log(erroAxios);
+
         if (
           erroAxios?.response?.status === HttpStatusCode.BadRequest &&
           erroAxios?.response?.data?.message
@@ -154,6 +160,7 @@ export function EventModal({
 
   async function update(formData: Event) {
     try {
+      setIsLoading(true);
       await API.put(`events/${data?.id}`, formData);
       toast({
         title: 'Evento alterado com sucesso!',
@@ -161,10 +168,12 @@ export function EventModal({
       });
       setIsModalOpenIntern(false);
       onModalClose();
+      setIsLoading(false);
     } catch (err: any) {
+      setIsLoading(false);
       if (err) {
         const erroAxios = err as AxiosError<{ message: string }>;
-        console.log(erroAxios);
+
         if (
           erroAxios?.response?.status === HttpStatusCode.BadRequest &&
           erroAxios?.response?.data?.message
@@ -187,11 +196,25 @@ export function EventModal({
   }
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const dataParsed: z.infer<typeof FormSchema> = {
+      ...data,
+      start_at: `${data?.start_at}:00`,
+      end_at: `${data?.end_at}:00`,
+    };
+
+    if (!compareHourIsGtHour(data.end_at, data.start_at)) {
+      toast({
+        title: 'Hora/Fim precisa ser maior que Hora/Ínicio',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (type === 'create') {
-      await create(data);
+      await create(dataParsed);
     }
     if (type === 'update') {
-      await update(data as Event);
+      await update(dataParsed as Event);
     }
   }
 
@@ -276,30 +299,117 @@ export function EventModal({
               <FormField
                 control={form.control}
                 name="start_at"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hora/Início:</FormLabel>
-                    <Input
-                      onChange={field.onChange}
-                      defaultValue={field.value}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const startsWithTwo = field.value?.startsWith('2');
+                  const mask = [
+                    /[0-2]/,
+                    startsWithTwo ? /[0-3]/ : /[0-9]/,
+                    ':',
+                    /[0-5]/,
+                    /[0-9]/,
+                  ];
+
+                  const maskRegex = new RegExp(
+                    /[0-2]/.source +
+                      (startsWithTwo ? /[0-3]/.source : /[0-9]/.source) +
+                      ':' +
+                      /[0-5]/.source +
+                      /[0-9]/.source
+                  );
+
+                  const ok = maskRegex.test(field.value);
+
+                  let amPm = '';
+                  if (ok) {
+                    amPm = getAmPmFromHour(`${field.value}:00`);
+                  }
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Hora/Início: {amPm}</FormLabel>
+                      <div>
+                        <InputMask
+                          className="flex w-full h-10 px-3 py-2 text-sm bg-transparent border rounded-md border-input ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          mask={mask}
+                          onBlur={(value) => {
+                            const ok = maskRegex.test(
+                              value.currentTarget?.value
+                            );
+
+                            if (!ok) {
+                              field.onChange(undefined);
+                            }
+                          }}
+                          onChange={(value) => {
+                            field.onChange(
+                              value.currentTarget.value !== ''
+                                ? value
+                                : undefined
+                            );
+                          }}
+                          defaultValue={field.value}
+                          placeholder="hora..."
+                        />
+                      </div>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               <FormField
                 control={form.control}
                 name="end_at"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hora/Fim:</FormLabel>
-                    <Input
-                      onChange={field.onChange}
-                      defaultValue={field.value}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const startsWithTwo = field.value?.startsWith('2');
+                  const mask = [
+                    /[0-2]/,
+                    startsWithTwo ? /[0-3]/ : /[0-9]/,
+                    ':',
+                    /[0-5]/,
+                    /[0-9]/,
+                  ];
+
+                  const maskRegex = new RegExp(
+                    /[0-2]/.source +
+                      (startsWithTwo ? /[0-3]/.source : /[0-9]/.source) +
+                      ':' +
+                      /[0-5]/.source +
+                      /[0-9]/.source
+                  );
+
+                  const ok = maskRegex.test(field.value);
+
+                  let amPm = '';
+                  if (ok) {
+                    amPm = getAmPmFromHour(`${field.value}:00`);
+                  }
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Hora/Fim: {amPm}</FormLabel>
+                      <InputMask
+                        className="flex w-full h-10 px-3 py-2 text-sm bg-transparent border rounded-md border-input ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        mask={mask}
+                        onBlur={(value) => {
+                          const ok = maskRegex.test(value.currentTarget?.value);
+
+                          if (!ok) {
+                            field.onChange(undefined);
+                          }
+                        }}
+                        onChange={(value) => {
+                          field.onChange(
+                            value.currentTarget.value !== '' ? value : undefined
+                          );
+                        }}
+                        defaultValue={field.value}
+                        placeholder="hora..."
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               <FormField
                 control={form.control}
@@ -309,7 +419,7 @@ export function EventModal({
                     <FormLabel>Cor:</FormLabel>
                     <div className="flex gap-1">
                       <PopoverPicker
-                        color={field.value || '#fff'}
+                        color={field.value ?? '#fff'}
                         onChange={field.onChange}
                       />
                       <PaletteIcon />
@@ -330,7 +440,12 @@ export function EventModal({
                   </FormItem>
                 )}
               />
-              <Button type="submit">Salvar</Button>
+              <Button
+                disabled={isLoading}
+                title="Salvar"
+                isLoading={isLoading}
+                type="submit"
+              />
             </form>
           </Form>
         </div>
