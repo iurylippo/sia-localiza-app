@@ -10,14 +10,17 @@ import { MapDefs } from './defs';
 import { MapEntracePoint } from './entrance-point';
 import { MapArea } from './area-path';
 import { type CampusEvent } from '@/models/campus-event';
-import { API } from '@/services/api/axios';
+// import { API } from '@/services/api/axios';
 import { ComboBox, type ComboBoxOption } from '../combo-box';
 import { weekDays, weekPeriods } from '@/common/constants';
 import { SearchButton } from '../buttons/search-button';
-import { type Professor } from '@/models/professors';
-import { type Subject } from '@/models/subject';
+// import { type Professor } from '@/models/professors';
+// import { type Subject } from '@/models/subject';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import { useToast } from '../layout/use-toast';
+import { campusEventsFake } from '@/@seed/data-fake/campus-events';
+import { professorsFake } from '@/@seed/data-fake/professors';
+import { subjectsFake } from '@/@seed/data-fake/subjects';
 
 export default function MapVector() {
   const [professorsOptions, setProfessorsOptions] = useState<ComboBoxOption[]>(
@@ -57,14 +60,35 @@ export default function MapVector() {
         return;
       }
 
-      const response = await API.get<CampusEvent[]>('/events/campus', {
-        params: {
-          day_week: dayWeek,
-          day_period: dayPeriod,
-          professor_id: professorId,
-          subject_id: subjectId,
-        },
+      const data = campusEventsFake.filter((d) => {
+        let filter = false;
+        if (dayWeek) {
+          filter = d.event.day_week === dayWeek;
+        }
+        if (dayPeriod) {
+          filter = filter && d.event.day_period === dayPeriod;
+        }
+        if (professorId || subjectId) {
+          filter =
+            filter &&
+            (d.professor_id === professorId || d.subject_id === subjectId);
+        }
+
+        return filter;
       });
+
+      const response = {
+        data,
+      };
+
+      // const response = await API.get<CampusEvent[]>('/events/campus', {
+      //   params: {
+      //     day_week: dayWeek,
+      //     day_period: dayPeriod,
+      //     professor_id: professorId,
+      //     subject_id: subjectId,
+      //   },
+      // });
 
       if (response.data.length) {
         const data = response.data[0];
@@ -94,14 +118,20 @@ export default function MapVector() {
   };
 
   const loadProfessors = async () => {
-    const response = await API.get<Professor[]>('/professors');
+    const response = {
+      data: professorsFake,
+    };
+    // const response = await API.get<Professor[]>('/professors');
     setProfessorsOptions(
       response.data.map((p) => ({ label: p.name, value: p.id }))
     );
   };
 
   const loadSubjects = async () => {
-    const response = await API.get<Subject[]>('/subjects');
+    const response = {
+      data: subjectsFake,
+    };
+    // const response = await API.get<Subject[]>('/subjects');
     setSubjectsOptions(
       response.data.map((p) => ({ label: p.name, value: p.id }))
     );

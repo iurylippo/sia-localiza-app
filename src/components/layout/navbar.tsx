@@ -1,4 +1,4 @@
-import { BarChart3Icon } from 'lucide-react';
+import { AlignJustifyIcon } from 'lucide-react';
 import classNames from 'classnames';
 import { siaLocalizaLogo } from '@/assets';
 interface Props {
@@ -22,7 +22,7 @@ const Navbar = (props: Props) => {
       </div>
       <div className="flex-grow"></div> {/** spacer */}
       <button className="md:hidden" onClick={props.onMenuButtonClick}>
-        <BarChart3Icon className="w-6 h-6" />
+        <AlignJustifyIcon className="w-6 h-6" />
       </button>
     </nav>
   );
