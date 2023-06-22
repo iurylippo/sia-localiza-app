@@ -1,7 +1,7 @@
 {
     "name": "Sia Localiza",
     "short_name": "SiaLocaliza",
-    "start_url": "/",
+    "start_url": "https://sia-localiza-app.vercel.app",
     "icons": [
         {
             "src": "/android-chrome-144x144.png",
